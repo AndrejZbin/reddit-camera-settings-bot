@@ -81,9 +81,11 @@ function sendInfoPro(comment, name) {
     let result = '';
     pool.getConnection((err, connection) => {
         if(err) { 
-          return; 
+            console.log('Failed getting connection');
+            return; 
         }
         connection.query(queries.GET_PRO, ['%' + name + '%'], (error, results, fields) => {
+            connection.release();
             if (error) {         
                 console.log('Problem sending info for pro player');
                 return;
@@ -107,6 +109,7 @@ function sendInfoTeam(comment, name) {
             return; 
         }
         connection.query(queries.GET_TEAM, ['%' + name + '%', name], (error, results, fields) => {
+            connection.release();
             if (error) {         
                 console.log('Problem sending info for team');
                 return;
@@ -140,6 +143,7 @@ function updateRedditPlayer(info) {
             return; 
         }
         connection.query(queries.UPDATE_REDDIT, info, (error, results, fields) => {
+            connection.release();
             if (error) {         
                 console.log(`Problem updating player ${info['rawname']}, SQL: ${error.sql}`);
                 return;
@@ -155,6 +159,7 @@ function updateProPlayer(info) {
             return; 
         }
         connection.query(queries.UPDATE_PRO, info, (error, results, fields) => {
+            connection.release();
             if (error) {         
                 console.log(`Problem updating player ${info['rawname']}, SQL: ${error.sql}`);
                 return;
