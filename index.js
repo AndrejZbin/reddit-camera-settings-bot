@@ -12,7 +12,7 @@ const cheerioTableparser = require('cheerio-tableparser');
 const mysql = require('mysql');
 
 const r = new Snoowrap({
-    userAgent: process.env.USER_AGENT,'reddit-bot-example-node',
+    userAgent: process.env.USER_AGENT,
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     username: process.env.REDDIT_USER,
