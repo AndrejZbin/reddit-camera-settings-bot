@@ -91,7 +91,7 @@ function sendInfoPro(comment, name) {
                 return;
             }        
             result = buildTable(results);
-            if (!result) {
+            if (results.length===0) {
                 result+='No players found containing \'' + name + '\', try again.  \n  \n';
             }
             result+='I am a bot created by /u/scooty14, [DATA SOURCE](https://liquipedia.net/rocketleague/List_of_player_camera_settings)'
@@ -118,7 +118,7 @@ function sendInfoTeam(comment, name) {
                 return a['rawfullteam'].localeCompare(b['rawfullteam']);
                 });
             result = buildTable(results);
-            if (!result) {
+            if (results.length===0) {
                 result+='No team found for query \'' + name + '\', try again.  \n  \n';
             }
             result+='I am a bot created by /u/scooty14, [DATA SOURCE](https://liquipedia.net/rocketleague/List_of_player_camera_settings)'
