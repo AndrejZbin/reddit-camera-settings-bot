@@ -1,0 +1,35 @@
+{
+  "name": "reddit-camera-settings-bot",
+  "version": "1.0.0",
+  "description": "Get camera settings of players",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndrejZbin/reddit-camera-settings-bot.git"
+  },
+  "keywords": [
+    "rocket",
+    "league",
+    "camera",
+    "settings"
+  ],
+  "author": "Andrej Zbin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AndrejZbin/reddit-camera-settings-bot/issues"
+  },
+  "homepage": "https://github.com/AndrejZbin/reddit-camera-settings-bot#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "cheerio-tableparser": "^1.0.1",
+    "dotenv": "^6.0.0",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "mysql": "^2.16.0",
+    "snoostorm": "0.0.5",
+    "snoowrap": "^1.15.2"
+  }
+}
