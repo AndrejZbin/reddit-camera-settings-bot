@@ -48,7 +48,7 @@ comments.on('comment', (comment) => {
 });
 
 
-const db = mysql.createConnection({
+const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
@@ -62,12 +62,6 @@ const db = mysql.createConnection({
     }
 });
 
-
-db.connect(err => {
-    if (err) throw err;
-    console.log("Connected to DB!");
-    fetchPros();
-});
 
 const convertKeyTable = {
     rawname: 'Player\'s name',
@@ -84,39 +78,55 @@ const convertKeyTable = {
 }
 
 function sendInfoPro(comment, name) {
-    let result = ''
-    db.query(queries.GET_PRO, ['%' + name + '%'], (error, results, fields) => {
-        if (error) {         
-            console.log(`Problem updating player ${name}, SQL: ${error.sql}`);
-            return;
-        }        
-        result = buildTable(results);
-        result+='I am a bot created by /u/scooty14, [DATA SOURCE](https://liquipedia.net/rocketleague/List_of_player_camera_settings)'
-        if (comment) {
-            comment.reply(result);
+    let result = '';
+    pool.getConnection((err, connection) => {
+        if(err) { 
+          return; 
         }
-    }); 
+        connection.query(queries.GET_PRO, ['%' + name + '%'], (error, results, fields) => {
+            if (error) {         
+                console.log('Problem sending info for pro player');
+                return;
+            }        
+            result = buildTable(results);
+            if (!result) {
+                result+='No players found containing \'' + name + '\', try again.  \n  \n';
+            }
+            result+='I am a bot created by /u/scooty14, [DATA SOURCE](https://liquipedia.net/rocketleague/List_of_player_camera_settings)'
+            if (comment) {
+                comment.reply(result);
+            }
+        }); 
+    });
 }
 
 function sendInfoTeam(comment, name) {
-    let result = ''
-    db.query(queries.GET_TEAM, ['%' + name + '%', name], (error, results, fields) => {
-        if (error) {         
-            console.log(`Problem updating player ${name}, SQL: ${error.sql}`);
-            return;
-        }        
-        results.sort((a,b) => {
-            return a['rawfullteam'].localeCompare(b['rawfullteam']);
-            });
-        result = buildTable(results);
-        result+='I am a bot created by /u/scooty14, [DATA SOURCE](https://liquipedia.net/rocketleague/List_of_player_camera_settings)'
-        if (comment) {
-            comment.reply(result);
+    let result = '';
+    pool.getConnection((err, connection) => {
+        if(err) { 
+            return; 
         }
-        else {
-            console.log(result);
-        }
-    }); 
+        connection.query(queries.GET_TEAM, ['%' + name + '%', name], (error, results, fields) => {
+            if (error) {         
+                console.log('Problem sending info for team');
+                return;
+            }        
+            results.sort((a,b) => {
+                return a['rawfullteam'].localeCompare(b['rawfullteam']);
+                });
+            result = buildTable(results);
+            if (!result) {
+                result+='No team found for query \'' + name + '\', try again.  \n  \n';
+            }
+            result+='I am a bot created by /u/scooty14, [DATA SOURCE](https://liquipedia.net/rocketleague/List_of_player_camera_settings)'
+            if (comment) {
+                comment.reply(result);
+            }
+            else {
+                console.log(result);
+            }
+        });
+    });       
 }
 
 function normalize(str) {
@@ -124,21 +134,33 @@ function normalize(str) {
 }
 
 function updateRedditPlayer(info) {
-    db.query(queries.UPDATE_REDDIT, info, (error, results, fields) => {
-        if (error) {         
-            console.log(`Problem updating player ${info['rawname']}, SQL: ${error.sql}`);
-            return;
+    pool.getConnection((err, connection) => {
+        if(err) { 
+            console.log('Pro update failed');
+            return; 
         }
-    });  
+        connection.query(queries.UPDATE_REDDIT, info, (error, results, fields) => {
+            if (error) {         
+                console.log(`Problem updating player ${info['rawname']}, SQL: ${error.sql}`);
+                return;
+            }
+        });  
+    });
 }
 
 function updateProPlayer(info) {
-    db.query(queries.UPDATE_PRO, info, (error, results, fields) => {
-        if (error) {         
-            console.log(`Problem updating player ${info['rawname']}, SQL: ${error.sql}`);
-            return;
+    pool.getConnection((err, connection) => {
+        if(err) { 
+            console.log('Pro update failed');
+            return; 
         }
-    });  
+        connection.query(queries.UPDATE_PRO, info, (error, results, fields) => {
+            if (error) {         
+                console.log(`Problem updating player ${info['rawname']}, SQL: ${error.sql}`);
+                return;
+            }
+        });  
+    });
 }
 
 function fetchPros() {
@@ -219,3 +241,5 @@ function buildTable(results) {
     result+='  \n';
     return result;
 }
+
+fetchPros();
