@@ -115,7 +115,7 @@ function handleComment(comment, sendUnrecognized=true) {
         let match = comment.body.match(/(?:-camera|-player|-cam|-settings|-p|-c) ((?:\/?u\/)?[a-zA-Z0-9_\-]+)/);
         if (!match) match = comment.body.match(/(?:-cameras|-players|-cams|-ps|-cs) ((?:(?:\/?u\/)?[a-zA-Z0-9_\-]+ ?){1,10})/);
         if (match) {
-            let players = match[1].toLowerCase().split(' ');
+            let players = match[1].toLowerCase().split(' ').filter(x=>!!x);
             let reddit_names = [];
             let pro_names = [];
             for (let p of players) {
@@ -163,7 +163,7 @@ function handleComment(comment, sendUnrecognized=true) {
         match = comment.body.match(/(?:-team|-teamcam|-teamcamera|-tc|-t) ([a-zA-Z0-9_\-]+)/);
         if (!match) match = comment.body.match(/(?:-teams|-teamcams|-teamcameras|-tcs|-ts) ((?:[a-zA-Z0-9_\-]+ ?){1,10})/);
         if (match) {
-            let teams = match[1].toLowerCase().split(' ');
+            let teams = match[1].toLowerCase().split(' ').filter(x=>!!x);
             getInfoTeams(teams)
                 .then(info => {
                     return buildTableBody(info);
