@@ -21,12 +21,12 @@ const r = new Snoowrap({
 const client = new Snoostorm(r);
 
 const comments = client.CommentStream({
-    subreddit: 'scooty14',
+    subreddit: process.env.SUBREDDIT,
     results: 25
 });
 
 comments.on('comment', (comment) => {
-    let c = comment.body.match(/^!(?:camera|player|cam|settings) ((?:\/u\/)?[a-zA-Z0-9_\-]+)/)
+    let c = comment.body.match(/^!(?:camera|player|cam|settings) ((?:\/u\/)?[a-zA-Z0-9_\-]+)/);
     if (c) {
         let name = c[1].toLowerCase();
         if (name.startsWith('/u/')) {
@@ -39,7 +39,7 @@ comments.on('comment', (comment) => {
     }
     c = comment.body.match(/^!(?:team|teamcam) ((?:\/u\/)?[a-zA-Z0-9_\-]+)/);
     if (c) {
-        let team = c[1].toLowerCase();;
+        let team = c[1].toLowerCase();
         sendInfoTeam(comment, team);
         return;
     }
